@@ -1712,3 +1712,153 @@ Replace `username/my-app` with your actual image name.
 Store Docker credentials in GitHub repository secrets.
 
 ---
+
+# 28. Troubleshooting
+
+### Problem 1: Port Already in Use
+
+Error:
+
+```text
+port is already allocated
+```
+
+Solution:
+
+Use another host port.
+
+```bash
+docker run -d -p 8080:80 nginx
+```
+
+### Problem 2: Container Exits Immediately
+
+Check logs:
+
+```bash
+docker logs container_name
+```
+
+Check container status:
+
+```bash
+docker ps -a
+```
+
+### Problem 3: Cannot Connect to Database
+
+Check:
+
+- Is the database container running?
+- Are both containers on the same network?
+- Is the database hostname correct?
+- Is the database ready?
+- Are credentials correct?
+
+### Problem 4: Changes Are Not Reflected
+
+Rebuild the image:
+
+```bash
+docker compose up --build
+```
+
+For development, consider bind mounts.
+
+### Problem 5: Remove Unused Resources
+
+```bash
+docker system prune
+```
+
+---
+
+# 29. Important Interview Questions and Answers
+
+### Q1. What is Docker?
+
+Docker is a platform for packaging and running applications in isolated containers.
+
+### Q2. What is a Docker Image?
+
+An image is a read-only template used to create containers.
+
+### Q3. What is a Docker Container?
+
+A container is an isolated runtime instance created from an image.
+
+### Q4. What is the difference between Image and Container?
+
+An image is the template; a container is the running or stopped instance created from it.
+
+### Q5. What is Dockerfile?
+
+A Dockerfile contains instructions to build a Docker image.
+
+### Q6. What is Docker Compose?
+
+Docker Compose is a tool for defining and managing multi-container applications using YAML configuration.
+
+### Q7. What is Docker Hub?
+
+Docker Hub is a registry where developers can store, share, and download Docker images.
+
+### Q8. What is Port Mapping?
+
+Port mapping connects a host port to a container port.
+
+Example:
+
+```bash
+docker run -p 3000:3000 my-app
+```
+
+### Q9. What is Docker Volume?
+
+A volume is Docker-managed persistent storage that can exist independently of a container.
+
+### Q10. What is Bind Mount?
+
+A bind mount connects a specific host filesystem path to a container path.
+
+### Q11. What is Docker Networking?
+
+Docker networking allows containers to communicate with each other and external systems.
+
+### Q12. What is Multi-stage Build?
+
+A technique that uses multiple build stages to produce a smaller and cleaner final image.
+
+### Q13. Difference between CMD and ENTRYPOINT?
+
+CMD provides default command or arguments, while ENTRYPOINT defines the main executable of the container.
+
+### Q14. Difference between RUN and CMD?
+
+RUN executes during image building; CMD provides a default command when the container starts.
+
+### Q15. What is .dockerignore?
+
+A file that excludes selected files and folders from the Docker build context.
+
+### Q16. Does Docker Container preserve data after removal?
+
+Not necessarily. Data in the container's writable layer is removed with the container. Data stored in persistent volumes can survive.
+
+### Q17. What is Docker Daemon?
+
+A background service that manages Docker objects and processes Docker API requests.
+
+### Q18. What is Docker Registry?
+
+A system that stores and distributes Docker images.
+
+### Q19. Why use Docker in development?
+
+It provides consistent environments, simplifies dependency management, and makes collaboration easier.
+
+### Q20. What is a Health Check?
+
+A mechanism that checks whether a containerized service is functioning properly.
+
+---
