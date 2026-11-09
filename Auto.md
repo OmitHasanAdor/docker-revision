@@ -147,3 +147,106 @@ Docker Daemon
 ```
 
 ---
+
+# 4. Important Docker Terminologies
+
+| Term | Meaning |
+|---|---|
+| Docker Engine | Platform that builds and runs containers |
+| Docker Image | Template used to create containers |
+| Docker Container | Running or stopped instance of an image |
+| Dockerfile | Instructions for building an image |
+| Docker Hub | Public image registry |
+| Docker Volume | Persistent storage for container data |
+| Docker Network | Communication between containers |
+| Docker Compose | Tool for managing multiple containers |
+| Docker Registry | Image storage and distribution system |
+| Docker Daemon | Background Docker service |
+
+### Image vs Container
+
+Think of it like this:
+
+- Class = Image
+- Object = Container
+
+An image is a template. A container is an instance created from that template.
+
+One image can create multiple containers.
+
+---
+
+# 5. Docker Installation
+
+### Windows Installation
+
+Requirements:
+
+- Windows 10 or Windows 11.
+- WSL 2 support.
+- Hardware virtualization enabled.
+- Docker Desktop.
+
+Official installation guide:
+
+https://docs.docker.com/desktop/setup/install/windows-install/
+
+### Check Installation
+
+```bash
+docker --version
+```
+
+Check Docker information:
+
+```bash
+docker info
+```
+
+Check whether Docker is working:
+
+```bash
+docker run hello-world
+```
+
+This command downloads the hello-world image if necessary, creates a container, runs it, and displays a success message.
+
+---
+
+# 6. Docker Hub
+
+Docker Hub is a cloud-based registry where developers can find, download, and publish Docker images.
+
+Website: https://hub.docker.com/
+
+### Common Docker Hub Images
+
+- nginx
+- node
+- postgres
+- mongo
+- redis
+- mysql
+- ubuntu
+
+### Pull an Image
+
+```bash
+docker pull nginx
+```
+
+This downloads the Nginx image to your local machine.
+
+### Login to Docker Hub
+
+```bash
+docker login
+```
+
+### Logout
+
+```bash
+docker logout
+```
+
+---
