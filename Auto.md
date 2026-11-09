@@ -1862,3 +1862,81 @@ It provides consistent environments, simplifies dependency management, and makes
 A mechanism that checks whether a containerized service is functioning properly.
 
 ---
+
+# 30. Official Documentation
+
+Use these resources for deeper learning.
+
+| Topic | Documentation |
+|---|---|
+| Docker Overview | https://docs.docker.com/get-started/docker-overview/ |
+| Docker Installation | https://docs.docker.com/engine/install/ |
+| Docker Images | https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/ |
+| Docker Containers | https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/ |
+| Dockerfile | https://docs.docker.com/reference/dockerfile/ |
+| Docker Compose | https://docs.docker.com/compose/ |
+| Docker Volumes | https://docs.docker.com/engine/storage/volumes/ |
+| Docker Networking | https://docs.docker.com/engine/network/ |
+| Docker Security | https://docs.docker.com/engine/security/ |
+| Docker Build | https://docs.docker.com/build/ |
+| Docker Scout | https://docs.docker.com/scout/ |
+
+---
+
+# Final Revision Checklist
+
+Use this checklist to track your Docker learning progress.
+
+## Fundamentals
+
+- [ ] Understand Docker and Containerization.
+- [ ] Understand VM vs Docker.
+- [ ] Understand Docker Architecture.
+- [ ] Understand Images and Containers.
+- [ ] Install Docker Desktop.
+
+## Basic Commands
+
+- [ ] Pull and remove images.
+- [ ] Create and run containers.
+- [ ] Stop, start, and remove containers.
+- [ ] View logs and inspect containers.
+- [ ] Understand port mapping.
+
+## Dockerfile
+
+- [ ] Understand all important Dockerfile instructions.
+- [ ] Build custom Docker images.
+- [ ] Understand CMD vs ENTRYPOINT.
+- [ ] Use .dockerignore.
+- [ ] Understand image layers and caching.
+
+## Storage and Networking
+
+- [ ] Create and manage volumes.
+- [ ] Understand bind mounts.
+- [ ] Create Docker networks.
+- [ ] Connect multiple containers.
+
+## Docker Compose
+
+- [ ] Write compose.yaml.
+- [ ] Run multiple services.
+- [ ] Connect backend with PostgreSQL.
+- [ ] Understand health checks.
+- [ ] Manage volumes and networks.
+
+## Advanced
+
+- [ ] Build multi-stage images.
+- [ ] Optimize image sizes.
+- [ ] Understand Docker security.
+- [ ] Push images to Docker Hub.
+- [ ] Build a CI/CD pipeline.
+- [ ] Deploy a Dockerized application.
+
+---
+
+**Learning Goal:** Be able to containerize a real-world full-stack application using Next.js, Node.js, and PostgreSQL, manage it using Docker Compose, and deploy it confidently.
+
+**Remember:** Understanding concepts is important, but hands-on practice is what makes Docker knowledge useful in real-world development.
