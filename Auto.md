@@ -538,3 +538,333 @@ docker run -d \
 ```
 
 ---
+
+# 11. Environment Variables
+
+Environment variables allow applications to receive configuration values without hardcoding them into source code.
+
+### Using -e
+
+```bash
+docker run -d \
+  --name my-app \
+  -e NODE_ENV=production \
+  node:22-alpine
+```
+
+### Using --env-file
+
+Create a file named `.env`:
+
+```env
+NODE_ENV=production
+PORT=5000
+DATABASE_URL=postgresql://user:password@db:5432/mydb
+```
+
+Run:
+
+```bash
+docker run --env-file .env my-app
+```
+
+### View Container Environment
+
+```bash
+docker exec my-app printenv
+```
+
+**Security Note:** Never commit secrets or production credentials to GitHub. Use secure secret management for production.
+
+---
+
+# 12. Dockerfile
+
+### What is a Dockerfile?
+
+A Dockerfile is a text file containing instructions that Docker uses to build an image.
+
+It defines:
+
+- Base image
+- Working directory
+- Dependencies
+- Application files
+- Ports
+- Startup commands
+
+### Basic Dockerfile Example
+
+```dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
+```
+
+### Dockerfile Instructions Explained
+
+**1. FROM**
+
+Defines the base image.
+
+```dockerfile
+FROM node:22-alpine
+```
+
+**2. WORKDIR**
+
+Sets the working directory inside the image.
+
+```dockerfile
+WORKDIR /app
+```
+
+**3. COPY**
+
+Copies files from the build context into the image.
+
+```dockerfile
+COPY package*.json ./
+```
+
+**4. RUN**
+
+Executes commands during image building.
+
+```dockerfile
+RUN npm install
+```
+
+**5. EXPOSE**
+
+Documents which port the application is expected to listen on.
+
+```dockerfile
+EXPOSE 5000
+```
+
+It does not publish the port to the host. Use `-p` or Compose port configuration for that.
+
+**6. CMD**
+
+Defines the default command executed when the container starts.
+
+```dockerfile
+CMD ["npm", "start"]
+```
+
+**7. ENTRYPOINT**
+
+Defines the main executable for the container.
+
+```dockerfile
+ENTRYPOINT ["node"]
+```
+
+**8. ENV**
+
+Sets environment variables in the image.
+
+```dockerfile
+ENV NODE_ENV=production
+```
+
+**9. ARG**
+
+Defines a build-time variable.
+
+```dockerfile
+ARG APP_VERSION=1.0
+```
+
+**10. ADD**
+
+Copies files and can automatically extract local archives. Prefer `COPY` for ordinary file copying.
+
+**11. USER**
+
+Sets the user used to run subsequent instructions and the container process.
+
+```dockerfile
+USER node
+```
+
+**12. LABEL**
+
+Adds metadata to an image.
+
+```dockerfile
+LABEL maintainer="developer"
+```
+
+### CMD vs RUN vs ENTRYPOINT
+
+| Instruction | Purpose |
+|---|---|
+| RUN | Executes during image build |
+| CMD | Provides default container startup command |
+| ENTRYPOINT | Defines the main executable |
+| EXPOSE | Documents the application port |
+
+Example:
+
+```dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "start"]
+```
+
+### Build Docker Image
+
+```bash
+docker build -t my-node-app .
+```
+
+### Run Image
+
+```bash
+docker run -d -p 5000:5000 --name my-node-container my-node-app
+```
+
+---
+
+# 13. .dockerignore
+
+### What is .dockerignore?
+
+A `.dockerignore` file tells Docker which files and directories to exclude from the build context.
+
+This reduces unnecessary file transfers and prevents unwanted files from entering the image.
+
+### Example
+
+Create `.dockerignore`:
+
+```text
+node_modules
+.next
+.git
+.env
+.env.*
+npm-debug.log
+coverage
+dist
+```
+
+**Important:** If your Dockerfile needs a particular file, do not exclude it from the build context.
+
+---
+
+# 14. Docker Volumes and Bind Mounts
+
+### Why Do We Need Volumes?
+
+Containers are designed to be replaceable. Data stored only in a container's writable layer can be lost when the container is removed.
+
+Volumes provide persistent storage outside the container's writable layer.
+
+### Types of Storage
+
+1. Volumes
+2. Bind Mounts
+3. tmpfs Mounts
+
+### A. Docker Volume
+
+Docker manages the storage location.
+
+Create a volume:
+
+```bash
+docker volume create my-volume
+```
+
+List volumes:
+
+```bash
+docker volume ls
+```
+
+Inspect volume:
+
+```bash
+docker volume inspect my-volume
+```
+
+Use volume:
+
+```bash
+docker run -d \
+  --name my-nginx \
+  -v my-volume:/data \
+  nginx
+```
+
+Remove volume:
+
+```bash
+docker volume rm my-volume
+```
+
+### B. Bind Mount
+
+Bind mounts connect a specific host directory to a container directory.
+
+Example:
+
+```bash
+docker run -d \
+  --name my-app \
+  -v "D:/projects/my-app:/app" \
+  node:22-alpine
+```
+
+Here:
+
+- Host path: `D:/projects/my-app`
+- Container path: `/app`
+
+Changes in the host directory are reflected inside the container.
+
+### C. Read-only Mount
+
+```bash
+docker run -d \
+  -v "D:/projects/my-app:/app:ro" \
+  nginx
+```
+
+`ro` means read-only.
+
+### Volume vs Bind Mount
+
+| Volume | Bind Mount |
+|---|---|
+| Managed by Docker | Uses a specific host path |
+| Good for persistent application data | Good for source code sharing |
+| Docker controls its location | Developer chooses its location |
+| Useful for databases | Useful for development |
+
+### Caution
+
+Avoid mounting your complete project directory over a container directory that already contains installed dependencies unless you intentionally manage those dependencies separately.
+
+---
