@@ -75,3 +75,20 @@ Containerization is the process of packaging an application and its dependencies
 - Simplifies testing and CI/CD.
 
 ---
+
+# 2. Virtual Machine vs Docker
+
+| Virtual Machine | Docker Container |
+|---|---|
+| Runs a complete guest OS | Shares host OS kernel |
+| Uses a hypervisor | Uses container runtime |
+| Generally heavier | Generally lightweight |
+| Takes more resources | Uses fewer resources |
+| Usually slower to start | Usually starts quickly |
+| Stronger OS-level isolation | Process-level isolation |
+
+**Remember:**
+
+A Virtual Machine includes a guest operating system, whereas containers share the host operating system kernel.
+
+---
