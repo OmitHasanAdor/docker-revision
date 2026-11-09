@@ -1407,3 +1407,96 @@ Because both services communicate through Docker Compose's default network.
 **Production Note:** This is a learning example. Use proper secret management, migrations, non-root users, and production-specific configurations before deployment.
 
 ---
+
+# 21. Docker Image Layers and Caching
+
+### What are Image Layers?
+
+Docker images are built using multiple layers.
+
+Many Dockerfile instructions create filesystem layers. Docker can reuse unchanged layers during future builds.
+
+Example:
+
+```dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+CMD ["npm", "start"]
+```
+
+### Why Order Matters
+
+Suppose you change only your application source code.
+
+If dependencies have not changed, Docker can reuse the dependency installation layer from its build cache.
+
+This makes rebuilding faster.
+
+**Best Practice:**
+
+Copy dependency files first, install dependencies, then copy the remaining source code.
+
+---
+
+# 22. Multi-stage Builds
+
+### What is a Multi-stage Build?
+
+Multi-stage builds allow you to use multiple stages in a single Dockerfile.
+
+You can use one stage for building the application and another stage for running it.
+
+This helps reduce the final image size and unnecessary build dependencies.
+
+### Example
+
+```dockerfile
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
+CMD ["node", "dist/index.js"]
+```
+
+### Explanation
+
+- First stage: Installs dependencies and builds the application.
+- Second stage: Installs production dependencies and copies only required build output.
+- `AS builder`: Names the first stage.
+- `COPY --from=builder`: Copies files from the previous stage.
+
+**Benefits:**
+
+- Smaller final image.
+- Fewer unnecessary dependencies.
+- Better separation between build and runtime environments.
+
+---
