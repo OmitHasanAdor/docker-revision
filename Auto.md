@@ -1500,3 +1500,113 @@ CMD ["node", "dist/index.js"]
 - Better separation between build and runtime environments.
 
 ---
+
+# 23. Docker Security
+
+Important Docker security practices:
+
+### 1. Use Trusted Images
+
+Use official and trusted images.
+
+### 2. Avoid Running as Root
+
+Create and use a non-root user when possible.
+
+```dockerfile
+USER node
+```
+
+### 3. Never Hardcode Secrets
+
+Do not put passwords, API keys, or tokens directly in Dockerfiles.
+
+### 4. Keep Images Updated
+
+Use maintained image versions and security patches.
+
+### 5. Minimize Image Size
+
+Remove unnecessary packages and dependencies.
+
+### 6. Use .dockerignore
+
+Exclude unnecessary and sensitive files from the build context.
+
+### 7. Limit Container Privileges
+
+Avoid using privileged containers unless absolutely necessary.
+
+### 8. Scan Images
+
+Use Docker Scout to identify known vulnerabilities.
+
+```bash
+docker scout quickview my-app
+```
+
+---
+
+# 24. Docker Optimization
+
+Ways to optimize Docker images:
+
+1. Use lightweight base images when appropriate.
+2. Use multi-stage builds.
+3. Use `.dockerignore`.
+4. Optimize Dockerfile instruction order.
+5. Use `npm ci` for reproducible npm installations.
+6. Install only production dependencies in production images.
+7. Avoid unnecessary files.
+8. Use specific image versions.
+9. Use BuildKit caching where appropriate.
+10. Run containers as non-root users.
+
+---
+
+# 25. Docker Registry
+
+### What is a Docker Registry?
+
+A Docker Registry stores and distributes Docker images.
+
+Examples:
+
+- Docker Hub
+- GitHub Container Registry (GHCR)
+- Amazon Elastic Container Registry (ECR)
+- Google Artifact Registry
+
+### Push Image to Docker Hub
+
+Login:
+
+```bash
+docker login
+```
+
+Tag image:
+
+```bash
+docker tag my-app username/my-app:v1
+```
+
+Push image:
+
+```bash
+docker push username/my-app:v1
+```
+
+Pull image:
+
+```bash
+docker pull username/my-app:v1
+```
+
+Run image:
+
+```bash
+docker run -d -p 5000:5000 username/my-app:v1
+```
+
+---
