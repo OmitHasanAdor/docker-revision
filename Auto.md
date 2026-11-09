@@ -250,3 +250,291 @@ docker logout
 ```
 
 ---
+
+# 7. Docker Images
+
+### What is a Docker Image?
+
+A Docker image is a read-only template containing everything required to create a container.
+
+An image can include:
+
+- Base operating system or runtime
+- Application code
+- Dependencies
+- Configuration
+- Startup instructions
+
+### Pull an Image
+
+```bash
+docker pull nginx
+```
+
+### List Images
+
+```bash
+docker images
+```
+
+Alternative:
+
+```bash
+docker image ls
+```
+
+### Inspect an Image
+
+```bash
+docker image inspect nginx
+```
+
+### Remove an Image
+
+```bash
+docker rmi nginx
+```
+
+### Remove Unused Images
+
+```bash
+docker image prune
+```
+
+### Build an Image
+
+```bash
+docker build -t my-app .
+```
+
+Explanation:
+
+- `docker build`: Builds an image.
+- `-t`: Assigns a name and optional tag.
+- `my-app`: Image name.
+- `.`: Current directory is the build context.
+
+### Image Naming Convention
+
+```text
+repository:tag
+```
+
+Example:
+
+```text
+node:22-alpine
+postgres:17
+nginx:latest
+```
+
+A tag identifies a particular version or variant of an image.
+
+**Best Practice:** Avoid relying on `latest` in production. Prefer a specific, tested version.
+
+---
+
+# 8. Docker Containers
+
+### What is a Docker Container?
+
+A container is an isolated runtime instance created from a Docker image.
+
+### Create and Run a Container
+
+```bash
+docker run nginx
+```
+
+This creates and runs an Nginx container in the foreground.
+
+### Run in Background
+
+```bash
+docker run -d nginx
+```
+
+`-d` means detached mode.
+
+### Assign Container Name
+
+```bash
+docker run -d --name my-nginx nginx
+```
+
+### List Running Containers
+
+```bash
+docker ps
+```
+
+### List All Containers
+
+```bash
+docker ps -a
+```
+
+### Stop a Container
+
+```bash
+docker stop my-nginx
+```
+
+### Start a Stopped Container
+
+```bash
+docker start my-nginx
+```
+
+### Restart a Container
+
+```bash
+docker restart my-nginx
+```
+
+### Remove a Container
+
+```bash
+docker rm my-nginx
+```
+
+### Force Remove a Running Container
+
+```bash
+docker rm -f my-nginx
+```
+
+### View Container Logs
+
+```bash
+docker logs my-nginx
+```
+
+Follow logs continuously:
+
+```bash
+docker logs -f my-nginx
+```
+
+### Execute a Command Inside a Container
+
+```bash
+docker exec -it my-nginx sh
+```
+
+If Bash is available:
+
+```bash
+docker exec -it my-nginx bash
+```
+
+Explanation:
+
+- `exec`: Executes a command inside an existing container.
+- `-i`: Keeps standard input open.
+- `-t`: Allocates a terminal.
+- `sh`: Opens a shell.
+
+Exit the container shell:
+
+```bash
+exit
+```
+
+### Inspect a Container
+
+```bash
+docker inspect my-nginx
+```
+
+### Container Resource Usage
+
+```bash
+docker stats
+```
+
+---
+
+# 9. Essential Docker Commands
+
+### Image Commands
+
+```bash
+docker images
+docker pull nginx
+docker build -t my-app .
+docker rmi nginx
+docker image inspect nginx
+docker image prune
+```
+
+### Container Commands
+
+```bash
+docker run nginx
+docker run -d nginx
+docker ps
+docker ps -a
+docker stop container_name
+docker start container_name
+docker restart container_name
+docker rm container_name
+docker logs container_name
+docker exec -it container_name sh
+docker inspect container_name
+docker stats
+```
+
+### System Commands
+
+```bash
+docker version
+docker info
+docker system df
+docker system prune
+docker system prune -a
+```
+
+**Important:** `docker system prune -a` removes unused containers, networks, images, and build cache. It can remove images you may want to keep. Review before running.
+
+---
+
+# 10. Container Port Mapping
+
+Containers have their own network environment. To access a service inside a container from your computer, you usually need port mapping.
+
+### Example: Run Nginx
+
+```bash
+docker run -d -p 8080:80 --name my-nginx nginx
+```
+
+Explanation:
+
+```text
+-p HOST_PORT:CONTAINER_PORT
+```
+
+Here:
+
+- `8080` = Host port
+- `80` = Container port
+
+Now open:
+
+```text
+http://localhost:8080
+```
+
+You should see the Nginx welcome page.
+
+### Multiple Port Mapping
+
+```bash
+docker run -d \
+  -p 8080:80 \
+  -p 8443:443 \
+  nginx
+```
+
+---
