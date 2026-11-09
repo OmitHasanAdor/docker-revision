@@ -1610,3 +1610,105 @@ docker run -d -p 5000:5000 username/my-app:v1
 ```
 
 ---
+
+# 26. Docker Deployment
+
+Docker images can be deployed to servers and cloud platforms that support containers.
+
+Typical deployment workflow:
+
+```text
+Application Source Code
+          |
+          v
+       Dockerfile
+          |
+          v
+     Docker Build
+          |
+          v
+      Docker Image
+          |
+          v
+    Docker Registry
+          |
+          v
+    Production Server
+          |
+          v
+    Docker Container
+```
+
+Common deployment environments:
+
+- AWS
+- Azure
+- Google Cloud
+- DigitalOcean
+- VPS with Docker Engine
+- Container platforms such as Amazon ECS
+
+**Remember:** Docker packages and runs applications. It does not automatically provide a complete production infrastructure or orchestration system.
+
+---
+
+# 27. Docker with CI/CD
+
+### What is CI/CD?
+
+- CI = Continuous Integration
+- CD = Continuous Delivery or Continuous Deployment
+
+Docker can be integrated into CI/CD pipelines.
+
+Example workflow:
+
+1. Developer pushes code to GitHub.
+2. GitHub Actions starts a workflow.
+3. Application tests run.
+4. Docker image is built.
+5. Image is pushed to a registry.
+6. Production environment deploys the new image.
+
+### Example GitHub Actions Workflow
+
+Create:
+
+```text
+.github/workflows/docker.yml
+```
+
+```yaml
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: username/my-app:latest
+```
+
+Replace `username/my-app` with your actual image name.
+
+Store Docker credentials in GitHub repository secrets.
+
+---
