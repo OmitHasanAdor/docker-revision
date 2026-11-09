@@ -92,3 +92,58 @@ Containerization is the process of packaging an application and its dependencies
 A Virtual Machine includes a guest operating system, whereas containers share the host operating system kernel.
 
 ---
+
+# 3. Docker Architecture
+
+Docker follows a Client-Server architecture.
+
+### Main Components
+
+**1. Docker Client**
+
+The interface used to communicate with Docker.
+
+Example:
+
+```bash
+docker run nginx
+```
+
+**2. Docker Daemon (dockerd)**
+
+A background service responsible for managing Docker objects such as images, containers, networks, and volumes.
+
+**3. Docker Host**
+
+The machine where Docker Engine runs.
+
+**4. Docker Registry**
+
+A storage system for Docker images.
+
+Example: Docker Hub.
+
+**5. Docker Objects**
+
+- Images
+- Containers
+- Networks
+- Volumes
+
+### How Docker Works
+
+```text
+Docker Client
+     |
+     | Docker API
+     |
+Docker Daemon
+     |
+     |------------------|
+     |         |        |
+   Images  Containers Networks
+              |
+           Volumes
+```
+
+---
