@@ -868,3 +868,352 @@ docker run -d \
 Avoid mounting your complete project directory over a container directory that already contains installed dependencies unless you intentionally manage those dependencies separately.
 
 ---
+
+# 15. Docker Networking
+
+### What is Docker Networking?
+
+Docker networking allows containers to communicate with one another and with external networks.
+
+### Common Network Drivers
+
+| Driver | Purpose |
+|---|---|
+| bridge | Default networking for standalone containers |
+| host | Uses host networking |
+| none | Disables normal container networking |
+| overlay | Connects containers across Docker hosts |
+| macvlan | Assigns containers MAC addresses on a network |
+
+### List Networks
+
+```bash
+docker network ls
+```
+
+### Create Network
+
+```bash
+docker network create my-network
+```
+
+### Inspect Network
+
+```bash
+docker network inspect my-network
+```
+
+### Connect Container to Network
+
+```bash
+docker network connect my-network my-container
+```
+
+### Disconnect Container
+
+```bash
+docker network disconnect my-network my-container
+```
+
+### Remove Network
+
+```bash
+docker network rm my-network
+```
+
+### Container-to-Container Communication
+
+Suppose you have:
+
+- Backend container
+- PostgreSQL container
+
+Both are connected to the same user-defined Docker network.
+
+The backend can connect to PostgreSQL using the database container's name.
+
+```env
+DATABASE_URL=postgresql://postgres:password@db:5432/mydb
+```
+
+Here, `db` is the database container's network name or network alias.
+
+**Important:** Inside a container, `localhost` refers to that same container, not another container.
+
+---
+
+# 16. Docker Compose
+
+### What is Docker Compose?
+
+Docker Compose is a tool for defining and managing multi-container applications using a YAML configuration file.
+
+Instead of running multiple `docker run` commands, you can define the entire application in one `compose.yaml` file.
+
+### Why Docker Compose?
+
+Imagine your application requires:
+
+- Backend
+- Frontend
+- PostgreSQL
+- Redis
+
+Docker Compose allows you to manage all these services together.
+
+### Basic compose.yaml
+
+```yaml
+services:
+  app:
+    image: nginx
+    ports:
+      - "8080:80"
+```
+
+Run:
+
+```bash
+docker compose up
+```
+
+Run in background:
+
+```bash
+docker compose up -d
+```
+
+Stop and remove Compose resources:
+
+```bash
+docker compose down
+```
+
+### Important Docker Compose Commands
+
+```bash
+# Start services
+docker compose up
+
+# Start in detached mode
+docker compose up -d
+
+# Build and start
+docker compose up --build
+
+# Stop services
+docker compose stop
+
+# Start stopped services
+docker compose start
+
+# Stop and remove containers and default network
+docker compose down
+
+# Remove containers, networks and named volumes declared in the Compose file
+docker compose down -v
+
+# View running services
+docker compose ps
+
+# View logs
+docker compose logs
+
+# Follow logs
+docker compose logs -f
+
+# View a specific service's logs
+docker compose logs -f backend
+
+# Execute command inside a service
+docker compose exec backend sh
+
+# Rebuild images
+docker compose build
+
+# Restart services
+docker compose restart
+```
+
+### Important Compose Properties
+
+| Property | Purpose |
+|---|---|
+| services | Defines application services |
+| image | Uses an existing image |
+| build | Builds an image from a Dockerfile |
+| ports | Publishes container ports |
+| volumes | Mounts storage |
+| environment | Defines environment variables |
+| env_file | Loads variables from a file |
+| networks | Configures service networks |
+| depends_on | Controls service startup order |
+| restart | Defines restart policy |
+| command | Overrides the default command |
+| healthcheck | Checks service health |
+
+### depends_on
+
+```yaml
+services:
+  backend:
+    depends_on:
+      - db
+```
+
+This controls startup order, but does not automatically guarantee that the database is ready to accept connections.
+
+For readiness, use health checks and `condition: service_healthy`.
+
+---
+
+# 17. Dockerizing a Node.js Application
+
+Suppose your project structure is:
+
+```text
+my-node-app/
+│
+├── src/
+├── package.json
+├── package-lock.json
+├── .env
+├── .dockerignore
+└── Dockerfile
+```
+
+### Step 1: Create Dockerfile
+
+```dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
+```
+
+### Step 2: Create .dockerignore
+
+```text
+node_modules
+.git
+.env
+coverage
+npm-debug.log
+```
+
+### Step 3: Build Image
+
+```bash
+docker build -t my-node-app .
+```
+
+### Step 4: Run Container
+
+```bash
+docker run -d \
+  --name my-node-container \
+  -p 5000:5000 \
+  --env-file .env \
+  my-node-app
+```
+
+### Step 5: Check Logs
+
+```bash
+docker logs my-node-container
+```
+
+### Step 6: Test Application
+
+```text
+http://localhost:5000
+```
+
+---
+
+# 18. Dockerizing a Next.js Application
+
+Next.js applications can be deployed using Docker.
+
+A production-friendly approach is to use Next.js standalone output and a multi-stage Docker build.
+
+### Step 1: Update next.config.ts
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: "standalone",
+};
+
+export default nextConfig;
+```
+
+### Step 2: Create Dockerfile
+
+```dockerfile
+FROM node:22-alpine AS base
+
+WORKDIR /app
+
+FROM base AS deps
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+FROM base AS builder
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN npm run build
+
+FROM base AS runner
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+```
+
+### Step 3: Build Image
+
+```bash
+docker build -t my-next-app .
+```
+
+### Step 4: Run Container
+
+```bash
+docker run -d \
+  --name next-container \
+  -p 3000:3000 \
+  my-next-app
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+**Note:** If your project does not contain a `public` directory, adjust the Dockerfile accordingly. Native dependencies and platform-specific packages may also require additional configuration.
+
+---
