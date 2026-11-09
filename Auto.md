@@ -1217,3 +1217,193 @@ http://localhost:3000
 **Note:** If your project does not contain a `public` directory, adjust the Dockerfile accordingly. Native dependencies and platform-specific packages may also require additional configuration.
 
 ---
+
+# 19. PostgreSQL with Docker
+
+Docker makes it easy to run PostgreSQL without installing it directly on your computer.
+
+### Step 1: Pull PostgreSQL Image
+
+```bash
+docker pull postgres:17
+```
+
+### Step 2: Run PostgreSQL Container
+
+```bash
+docker run -d \
+  --name my-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=mysecretpassword \
+  -e POSTGRES_DB=mydatabase \
+  -p 5432:5432 \
+  -v postgres-data:/var/lib/postgresql/data \
+  postgres:17
+```
+
+### Explanation
+
+- `POSTGRES_USER`: Database username.
+- `POSTGRES_PASSWORD`: Database password.
+- `POSTGRES_DB`: Initial database name.
+- `5432:5432`: Host and container port.
+- `postgres-data`: Persistent Docker volume.
+
+### Step 3: Access PostgreSQL
+
+```bash
+docker exec -it my-postgres psql -U postgres -d mydatabase
+```
+
+### Step 4: List Databases
+
+```sql
+\l
+```
+
+### Step 5: Stop Container
+
+```bash
+docker stop my-postgres
+```
+
+### Step 6: Start Container
+
+```bash
+docker start my-postgres
+```
+
+**Important:** Removing the container does not remove a separately managed named volume. Your database data can remain available when you create a new container with the same volume.
+
+---
+
+# 20. Full Stack Application with Docker Compose
+
+This is one of the most important practical concepts.
+
+Suppose your application has:
+
+- Node.js Backend
+- PostgreSQL Database
+
+You can manage both using Docker Compose.
+
+### Project Structure
+
+```text
+fullstack-app/
+│
+├── backend/
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+│
+├── compose.yaml
+└── .env
+```
+
+### Backend Dockerfile
+
+```dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
+```
+
+### .env
+
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=mysecretpassword
+POSTGRES_DB=mydatabase
+```
+
+### compose.yaml
+
+```yaml
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://postgres:mysecretpassword@db:5432/mydatabase
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    container_name: database
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+```
+
+### Run the Application
+
+```bash
+docker compose up --build -d
+```
+
+### Check Services
+
+```bash
+docker compose ps
+```
+
+### View Logs
+
+```bash
+docker compose logs -f
+```
+
+### Stop Application
+
+```bash
+docker compose down
+```
+
+### Important Learning
+
+The backend connects to PostgreSQL using:
+
+```text
+db:5432
+```
+
+Not:
+
+```text
+localhost:5432
+```
+
+Because both services communicate through Docker Compose's default network.
+
+**Production Note:** This is a learning example. Use proper secret management, migrations, non-root users, and production-specific configurations before deployment.
+
+---
