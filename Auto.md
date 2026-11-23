@@ -1940,3 +1940,4 @@ Use this checklist to track your Docker learning progress.
 **Learning Goal:** Be able to containerize a real-world full-stack application using Next.js, Node.js, and PostgreSQL, manage it using Docker Compose, and deploy it confidently.
 
 **Remember:** Understanding concepts is important, but hands-on practice is what makes Docker knowledge useful in real-world development.
+
