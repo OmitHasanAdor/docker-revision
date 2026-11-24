@@ -18,3 +18,27 @@ Use these resources for deeper learning.
 | Docker Security | https://docs.docker.com/engine/security/ |
 | Docker Build | https://docs.docker.com/build/ |
 | Docker Scout | https://docs.docker.com/scout/ |
+
+
+
+### Check Installation
+
+```bash
+docker --version
+```
+
+Check Docker information:
+
+```bash
+docker info
+```
+
+Check whether Docker is working:
+
+```bash
+docker run hello-world
+```
+
+This command downloads the hello-world image if necessary, creates a container, runs it, and displays a success message.
+
+---
